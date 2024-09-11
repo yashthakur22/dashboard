@@ -101,14 +101,4 @@ Main dependencies include:
 
 For a full list of dependencies, please refer to the `package.json` file.
 
-## Contributing
 
-Contributions to the Doctor Dashboard are welcome. Please ensure you follow the existing code style and include tests for new features.
-
-## License
-
-[Specify your license here]
-
-## Contact
-
-If you have any questions or feedback, please contact [Your Name] at [your-email@example.com].
