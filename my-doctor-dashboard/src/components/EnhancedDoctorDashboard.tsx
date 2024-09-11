@@ -27,6 +27,7 @@ interface CallSummary {
   date: string;
   summary: string;
   nurse: string;
+  nurseImage: string;
 }
 interface ScheduledCall {
   id: number;
@@ -209,13 +210,21 @@ export default function EnhancedDoctorDashboard() {
                   <CardTitle>Call Summaries</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {callSummaries.map(summary => (
-                    <div key={summary.id} className="mb-4 border-b pb-4">
-                      <p><strong>Date:</strong> {new Date(summary.date).toLocaleDateString()}</p>
-                      <p><strong>Nurse:</strong> {summary.nurse}</p>
-                      <p>{summary.summary}</p>
-                    </div>
-                  ))}
+                {callSummaries.map(summary => (
+        <div key={summary.id} className="mb-4 border-b pb-4">
+          <div className="flex items-center mb-2">
+            <Image
+              src={summary.nurseImage}
+              alt={summary.nurse}
+              width={32}
+              height={32}
+              className="rounded-full mr-2"
+            />
+            <p><strong>{summary.nurse}</strong> - {new Date(summary.date).toLocaleDateString()}</p>
+          </div>
+          <p>{summary.summary}</p>
+        </div>
+      ))}
                 </CardContent>
               </Card>
 

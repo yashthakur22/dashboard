@@ -15,7 +15,7 @@ model Patient {
   history        String
   medications    Medication[]
   callSummaries  CallSummary[]
-  scheduledCalls ScheduledCall[] // Add this line
+  scheduledCalls ScheduledCall[]
 }
 
 model Medication {
@@ -28,12 +28,13 @@ model Medication {
 }
 
 model CallSummary {
-  id        Int      @id @default(autoincrement())
-  patientId Int
-  date      DateTime
-  summary   String
-  nurse     String
-  patient   Patient  @relation(fields: [patientId], references: [id])
+  id         Int      @id @default(autoincrement())
+  patientId  Int
+  date       DateTime
+  summary    String
+  nurse      String
+  nurseImage String
+  patient    Patient  @relation(fields: [patientId], references: [id])
 }
 
 model ScheduledCall {

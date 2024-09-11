@@ -22,12 +22,14 @@ async function main() {
           {
             date: new Date("2023-06-01"),
             summary: "Patient reported increased shortness of breath. Advised on fluid intake and weight monitoring. Scheduled in-person follow-up.",
-            nurse: "AI Nurse Sarah"
+            nurse: "AI Nurse Sarah",
+            nurseImage: "/images/nurse-avatar.png"
           },
           {
             date: new Date("2023-05-15"),
             summary: "Patient adhering to medication regimen. No significant changes in symptoms. Encouraged continued compliance with low-sodium diet.",
-            nurse: "AI Nurse John"
+            nurse: "AI Nurse John", 
+            nurseImage: "/images/nurse-avatar.png"
           }
         ]
       }
@@ -53,7 +55,8 @@ async function main() {
           {
             date: new Date("2023-06-02"),
             summary: "Patient showing good progress in speech therapy. Reported occasional headaches. Advised on sleep hygiene and stress management.",
-            nurse: "AI Nurse Emma"
+            nurse: "AI Nurse Emma", 
+            nurseImage: "/images/nurse-avatar.png"
           }
         ]
       }
@@ -77,9 +80,16 @@ async function main() {
       callSummaries: {
         create: [
           {
-            date: new Date("2023-06-03"),
-            summary: "Patient's blood pressure well-controlled. Discussed importance of limiting protein intake. Scheduled routine blood work.",
-            nurse: "AI Nurse Sarah"
+            date: new Date("2023-06-01"),
+            summary: "Patient reported increased shortness of breath. Advised on fluid intake and weight monitoring. Scheduled in-person follow-up.",
+            nurse: "AI Nurse Sarah",
+            nurseImage: "/images/nurse-avatar.png",  
+          },
+          {
+            date: new Date("2023-05-15"),
+            summary: "Patient adhering to medication regimen. No significant changes in symptoms. Encouraged continued compliance with low-sodium diet.",
+            nurse: "AI Nurse John",
+            nurseImage: "/images/nurse-avatar.png"
           }
         ]
       }
