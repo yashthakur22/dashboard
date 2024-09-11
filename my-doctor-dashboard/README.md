@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Doctor Dashboard
 
-## Getting Started
+This project is a Next.js application that provides a dashboard for doctors to manage patient information, view call summaries, and schedule new calls.
 
-First, run the development server:
+## Prerequisites
 
-```bash
+Before you begin, ensure you have met the following requirements:
+
+- Node.js (v14 or later)
+- npm (usually comes with Node.js)
+- Git
+
+## Installation
+
+To install the Doctor Dashboard, follow these steps:
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/your-username/doctor-dashboard.git
+   cd doctor-dashboard
+   ```
+
+2. Install the dependencies:
+   ```
+   npm install
+   ```
+
+3. Set up the database:
+   ```
+   npx prisma generate
+   npx prisma migrate dev --name init
+   npm run db:seed
+   ```
+
+## Configuration
+
+1. Create a `.env` file in the root directory with the following content:
+   ```
+   DATABASE_URL="file:./dev.db"
+   ```
+
+2. Ensure your `next.config.js` file includes the necessary configurations:
+   ```javascript
+   /** @type {import('next').NextConfig} */
+   const nextConfig = {
+     reactStrictMode: true,
+     images: {
+       domains: ['localhost'],
+     },
+   }
+
+   module.exports = nextConfig
+   ```
+
+## Running the Application
+
+To run the Doctor Dashboard, use the following command:
+
+```
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Visit `http://localhost:3000/dashboard` to access the doctor dashboard.
+- Select a patient from the list to view their details, medications, and call summaries.
+- Schedule new calls for patients and add questions for the upcoming calls.
 
-## Learn More
+## Database Management
 
-To learn more about Next.js, take a look at the following resources:
+- To view the database content, run:
+  ```
+  npx prisma studio
+  ```
+  This will open Prisma Studio in your browser, typically at `http://localhost:5555`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- To reset the database and re-seed it:
+  ```
+  npx prisma migrate reset
+  ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+- `/app`: Contains the Next.js application routes and API routes
+- `/components`: React components used in the application
+- `/lib`: Utility functions and database client
+- `/prisma`: Prisma schema and migrations
+- `/public`: Static assets
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Dependencies
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Main dependencies include:
+
+- Next.js
+- React
+- Prisma
+- TypeScript
+- Tailwind CSS (for styling)
+
+For a full list of dependencies, please refer to the `package.json` file.
+
+## Contributing
+
+Contributions to the Doctor Dashboard are welcome. Please ensure you follow the existing code style and include tests for new features.
+
+## License
+
+[Specify your license here]
+
+## Contact
+
+If you have any questions or feedback, please contact [Your Name] at [your-email@example.com].
