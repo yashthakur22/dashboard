@@ -3,8 +3,10 @@ CREATE TABLE "Patient" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "photo" TEXT NOT NULL,
+    "phoneNumber" TEXT NOT NULL,
     "diagnosis" TEXT NOT NULL,
-    "history" TEXT NOT NULL
+    "history" TEXT NOT NULL,
+    "dischargeNotes" TEXT
 );
 
 -- CreateTable
@@ -12,7 +14,6 @@ CREATE TABLE "Medication" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "dosage" TEXT NOT NULL,
-    "image" TEXT NOT NULL,
     "patientId" INTEGER NOT NULL,
     CONSTRAINT "Medication_patientId_fkey" FOREIGN KEY ("patientId") REFERENCES "Patient" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );

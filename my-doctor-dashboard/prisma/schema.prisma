@@ -11,8 +11,10 @@ model Patient {
   id             Int             @id @default(autoincrement())
   name           String
   photo          String
+  phoneNumber    String          
   diagnosis      String
   history        String
+  dischargeNotes String?         
   medications    Medication[]
   callSummaries  CallSummary[]
   scheduledCalls ScheduledCall[]
@@ -22,7 +24,6 @@ model Medication {
   id        Int     @id @default(autoincrement())
   name      String
   dosage    String
-  image     String
   patientId Int
   patient   Patient @relation(fields: [patientId], references: [id])
 }

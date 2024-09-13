@@ -9,15 +9,16 @@ interface Medication {
   id: number;
   name: string;
   dosage: string;
-  image: string;
 }
 
 interface Patient {
   id: number;
   name: string;
   photo: string;
+  phoneNumber: string;
   diagnosis: string;
   history: string;
+  dischargeNotes: string | null;
   medications: Medication[];
 }
 
@@ -171,63 +172,106 @@ export default function EnhancedDoctorDashboard() {
         </aside>
         <main className="flex-1 p-6 overflow-auto">
           {selectedPatient && (
-            <div className="max-w-4xl mx-auto">
-              <Card className="mb-6 bg-white shadow-lg">
-                <CardHeader>
-                  <div className="flex items-center">
-                    <Image
-                      src={patients.find(p => p.id === selectedPatient)?.photo || '/images/patient-avatar.png'}
-                      alt="Patient"
-                      width={64}
-                      height={64}
-                      className="rounded-full mr-4"
-                    />
-                    <CardTitle className="text-2xl">
-                      {patients.find(p => p.id === selectedPatient)?.name}
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p><strong>Diagnosis:</strong> {patients.find(p => p.id === selectedPatient)?.diagnosis}</p>
-                  <p><strong>History:</strong> {patients.find(p => p.id === selectedPatient)?.history}</p>
-                  <h3 className="font-semibold mt-4 mb-2">Medications:</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    {patients.find(p => p.id === selectedPatient)?.medications.map(med => (
-                      <div key={med.id} className="flex items-center space-x-2">
-                        <Image src={med.image} alt={med.name} width={32} height={32} />
-                        <div>
-                          <p className="font-medium">{med.name}</p>
-                          <p className="text-sm text-gray-500">{med.dosage}</p>
-                        </div>
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Patient Information Card */}
+                <Card className="bg-white shadow-lg">
+                  <CardHeader>
+                    <div className="flex items-center">
+                      <Image
+                        src={patients.find(p => p.id === selectedPatient)?.photo || '/images/patient-avatar.png'}
+                        alt="Patient"
+                        width={64}
+                        height={64}
+                        className="rounded-full mr-4"
+                      />
+                      <div>
+                        <CardTitle className="text-2xl">
+                          {patients.find(p => p.id === selectedPatient)?.name}
+                        </CardTitle>
+                        <p className="text-sm text-gray-500">
+                          {patients.find(p => p.id === selectedPatient)?.phoneNumber}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p><strong>Diagnosis:</strong> {patients.find(p => p.id === selectedPatient)?.diagnosis}</p>
+                    <p><strong>History:</strong> {patients.find(p => p.id === selectedPatient)?.history}</p>
+                    <h3 className="font-semibold mt-4 mb-2">Medications:</h3>
+                    <ul>
+                      {patients.find(p => p.id === selectedPatient)?.medications.map(med => (
+                        <li key={med.id}>
+                          <strong>{med.name}:</strong> {med.dosage}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+  
+                {/* Discharge Notes Card */}
+                <Card className="bg-white shadow-lg">
+                  <CardHeader>
+                    <CardTitle>Discharge Notes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{patients.find(p => p.id === selectedPatient)?.dischargeNotes || 'No discharge notes available.'}</p>
+                  </CardContent>
+                </Card>
+              </div>
+  
+              {/* Call Summaries Card */}
               <Card className="mb-6 bg-white shadow-lg">
                 <CardHeader>
                   <CardTitle>Call Summaries</CardTitle>
                 </CardHeader>
                 <CardContent>
-                {callSummaries.map(summary => (
-        <div key={summary.id} className="mb-4 border-b pb-4">
-          <div className="flex items-center mb-2">
-            <Image
-              src={summary.nurseImage}
-              alt={summary.nurse}
-              width={32}
-              height={32}
-              className="rounded-full mr-2"
-            />
-            <p><strong>{summary.nurse}</strong> - {new Date(summary.date).toLocaleDateString()}</p>
-          </div>
-          <p>{summary.summary}</p>
-        </div>
-      ))}
+                  {callSummaries.map(summary => (
+                    <div key={summary.id} className="mb-4 border-b pb-4">
+                      <div className="flex items-center mb-2">
+                        <Image
+                          src={summary.nurseImage}
+                          alt={summary.nurse}
+                          width={32}
+                          height={32}
+                          className="rounded-full mr-2"
+                        />
+                        <p><strong>{summary.nurse}</strong> - {new Date(summary.date).toLocaleDateString()}</p>
+                      </div>
+                      <p>{summary.summary}</p>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
 
+              {/* Scheduled Calls Card */}
+            <Card className="mb-6 bg-white shadow-lg">
+              <CardHeader>
+                <CardTitle>Scheduled Calls</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {scheduledCalls.length > 0 ? (
+                  scheduledCalls.map(call => (
+                    <div key={call.id} className="mb-4 border-b pb-4">
+                      <p><strong>Date:</strong> {new Date(call.date).toLocaleDateString()}</p>
+                      <p><strong>Questions:</strong></p>
+                      <ul>
+                        {JSON.parse(call.questions).map((q: string, index: number) => (
+                          <li key={index}>{q}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))
+                ) : (
+                  <p>No scheduled calls for this patient.</p>
+                )}
+              </CardContent>
+            </Card>
+
+
+
+  
+              {/* Schedule New Call Card */}
               <Card className="mb-6 bg-white shadow-lg">
                 <CardHeader>
                   <CardTitle>Schedule New Call</CardTitle>
@@ -257,28 +301,6 @@ export default function EnhancedDoctorDashboard() {
                   <Button onClick={handleScheduleCall} className="w-full">Schedule Call</Button>
                 </CardContent>
               </Card>
-              <Card className="mb-6 bg-white shadow-lg">
-          <CardHeader>
-            <CardTitle>Scheduled Calls</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {scheduledCalls.length > 0 ? (
-              scheduledCalls.map(call => (
-                <div key={call.id} className="mb-4 border-b pb-4">
-                  <p><strong>Date:</strong> {new Date(call.date).toLocaleDateString()}</p>
-                  <p><strong>Questions:</strong></p>
-                  <ul>
-                    {JSON.parse(call.questions).map((q: string, index: number) => (
-                      <li key={index}>{q}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))
-            ) : (
-              <p>No scheduled calls for this patient.</p>
-            )}
-          </CardContent>
-        </Card>
             </div>
           )}
           {!selectedPatient && (
