@@ -31,7 +31,7 @@ model Medication {
 model CallSummary {
   id         Int      @id @default(autoincrement())
   patientId  Int
-  date       DateTime
+  dateTime   DateTime
   summary    String
   nurse      String
   nurseImage String
@@ -41,7 +41,7 @@ model CallSummary {
 model ScheduledCall {
   id        Int      @id @default(autoincrement())
   patientId Int
-  date      DateTime
+  dateTime  DateTime 
   questions String
   patient   Patient  @relation(fields: [patientId], references: [id])
 }

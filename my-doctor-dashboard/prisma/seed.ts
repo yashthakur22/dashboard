@@ -27,13 +27,13 @@ async function main() {
       callSummaries: {
         create: [
           {
-            date: new Date("2023-06-01"),
+            dateTime: new Date("2023-06-01T14:30:00Z"),
             summary: "Patient reported increased shortness of breath. Advised on fluid intake and weight monitoring. Scheduled in-person follow-up.",
             nurse: "AI Nurse Sarah",
             nurseImage: "/images/nurse-sarah.png"
           },
           {
-            date: new Date("2023-05-15"),
+            dateTime: new Date("2023-05-15T10:00:00Z"),
             summary: "Patient adhering to medication regimen. No significant changes in symptoms. Encouraged continued compliance with low-sodium diet.",
             nurse: "AI Nurse John",
             nurseImage: "/images/nurse-john.png"
@@ -61,7 +61,7 @@ async function main() {
       callSummaries: {
         create: [
           {
-            date: new Date("2023-06-02"),
+            dateTime: new Date("2023-06-02T11:15:00Z"),
             summary: "Patient showing good progress in speech therapy. Reported occasional headaches. Advised on sleep hygiene and stress management.",
             nurse: "AI Nurse Emma",
             nurseImage: "/images/nurse-emma.png"
@@ -89,7 +89,7 @@ async function main() {
       callSummaries: {
         create: [
           {
-            date: new Date("2023-06-03"),
+            dateTime: new Date("2023-06-03T09:45:00Z"),
             summary: "Patient's blood pressure well-controlled. Discussed importance of limiting protein intake. Scheduled routine blood work.",
             nurse: "AI Nurse Sarah",
             nurseImage: "/images/nurse-sarah.png"

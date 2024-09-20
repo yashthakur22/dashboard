@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from 'next/image'
+import { format } from 'date-fns' 
 
 interface Medication {
   id: number;
@@ -25,7 +26,7 @@ interface Patient {
 interface CallSummary {
   id: number;
   patientId: number;
-  date: string;
+  dateTime: string;
   summary: string;
   nurse: string;
   nurseImage: string;
@@ -33,16 +34,15 @@ interface CallSummary {
 interface ScheduledCall {
   id: number;
   patientId: number;
-  date: string;
+  dateTime: string;
   questions: string;
 }
-
 export default function EnhancedDoctorDashboard() {
   const [patients, setPatients] = useState<Patient[]>([])
   const [selectedPatient, setSelectedPatient] = useState<number | null>(null)
   const [scheduledCalls, setScheduledCalls] = useState<ScheduledCall[]>([])
   const [callSummaries, setCallSummaries] = useState<CallSummary[]>([])
-  const [date, setDate] = useState<string>('')
+  const [dateTime, setDateTime] = useState<string>('') 
   const [newQuestion, setNewQuestion] = useState("")
   const [questions, setQuestions] = useState<string[]>([])
 
@@ -108,27 +108,26 @@ export default function EnhancedDoctorDashboard() {
   }
 
   const handleScheduleCall = async () => {
-    if (!selectedPatient || !date) return
+    if (!selectedPatient || !dateTime) return
 
     try {
-      const response = await fetch('/api/schedule-call', {
+      const response = await fetch('/api/scheduled-calls', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           patientId: selectedPatient,
-          date,
+          dateTime,
           questions,
         }),
       })
 
       if (response.ok) {
-        setDate('')
+        setDateTime('')
         setQuestions([])
         alert('Call scheduled successfully!')
-        // Optionally, refresh call summaries here
-        fetchCallSummaries(selectedPatient)
+        fetchScheduledCalls(selectedPatient)
       } else {
         throw new Error('Failed to schedule call')
       }
@@ -236,8 +235,7 @@ export default function EnhancedDoctorDashboard() {
                           height={32}
                           className="rounded-full mr-2"
                         />
-                        <p><strong>{summary.nurse}</strong> - {new Date(summary.date).toLocaleDateString()}</p>
-                      </div>
+                        <p><strong>{summary.nurse}</strong> - {format(new Date(summary.dateTime), 'PPpp')}</p>                      </div>
                       <p>{summary.summary}</p>
                     </div>
                   ))}
@@ -253,9 +251,8 @@ export default function EnhancedDoctorDashboard() {
                 {scheduledCalls.length > 0 ? (
                   scheduledCalls.map(call => (
                     <div key={call.id} className="mb-4 border-b pb-4">
-                      <p><strong>Date:</strong> {new Date(call.date).toLocaleDateString()}</p>
-                      <p><strong>Questions:</strong></p>
-                      <ul>
+                        <p><strong>Date & Time:</strong> {format(new Date(call.dateTime), 'PPpp')}</p>
+                        <p><strong>Questions:</strong></p>                      <ul>
                         {JSON.parse(call.questions).map((q: string, index: number) => (
                           <li key={index}>{q}</li>
                         ))}
@@ -278,9 +275,9 @@ export default function EnhancedDoctorDashboard() {
                 </CardHeader>
                 <CardContent>
                   <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    type="datetime-local"
+                    value={dateTime}
+                    onChange={(e) => setDateTime(e.target.value)}
                     className="mb-4 p-2 border rounded"
                   />
                   <div className="mb-4">
