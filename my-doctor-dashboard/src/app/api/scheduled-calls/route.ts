@@ -3,10 +3,10 @@ import prisma from '@/lib/db'
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { patientId, dateTime, questions } = body
+  const { patientId, dateTime, questions, nurse } = body
 
-  if (!patientId || !dateTime) {
-    return NextResponse.json({ error: 'Patient ID and date/time are required' }, { status: 400 })
+  if (!patientId || !dateTime || !nurse) {
+    return NextResponse.json({ error: 'Patient ID, date/time, and nurse are required' }, { status: 400 })
   }
 
   try {
@@ -14,7 +14,9 @@ export async function POST(request: Request) {
       data: {
         patientId: parseInt(patientId),
         dateTime: new Date(dateTime),
-        questions: questions, // This should already be a JSON string
+        questions: questions,
+        status: 'PENDING',
+        nurse: nurse,
       }
     })
     return NextResponse.json(scheduledCall)

@@ -98,6 +98,16 @@ async function main() {
       }
     }
   })
+  
+  await prisma.scheduledCall.create({
+    data: {
+      patientId: john.id,
+      dateTime: new Date("2023-06-10T15:00:00Z"),
+      questions: JSON.stringify(["How are you feeling today?", "Have you been taking your medications as prescribed?"]),
+      status: "PENDING",
+      nurse: "AI Nurse Sarah"
+    }
+  })
 
   console.log({ john, jane, alice })
 }

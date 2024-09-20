@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Image from 'next/image'
-import { format } from 'date-fns' 
+import { format } from 'date-fns'
+import StatusBadge from "@/components/ui/StatusBadge"
 
 interface Medication {
   id: number;
@@ -36,6 +38,8 @@ interface ScheduledCall {
   patientId: number;
   dateTime: string;
   questions: string;
+  status: 'PENDING' | 'CALLING' | 'COMPLETE' | 'NO_ANSWER' | 'INCOMPLETE';
+  nurse: string;
 }
 export default function EnhancedDoctorDashboard() {
   const [patients, setPatients] = useState<Patient[]>([])
@@ -44,6 +48,8 @@ export default function EnhancedDoctorDashboard() {
   const [callSummaries, setCallSummaries] = useState<CallSummary[]>([])
   const [dateTime, setDateTime] = useState<string>('') 
   const [newQuestion, setNewQuestion] = useState("")
+  const [selectedNurse, setSelectedNurse] = useState<string>('')
+  const [nurses] = useState(['AI Nurse - Chronic Heart Failure', 'AI Nurse - Stroke', 'AI Nurse - Chronic kidney disease']) 
   const [questions, setQuestions] = useState<string[]>([])
 
   useEffect(() => {
@@ -108,7 +114,7 @@ export default function EnhancedDoctorDashboard() {
   }
 
   const handleScheduleCall = async () => {
-    if (!selectedPatient || !dateTime) return
+    if (!selectedPatient || !dateTime || !selectedNurse) return
 
     try {
       const response = await fetch('/api/scheduled-calls', {
@@ -119,13 +125,15 @@ export default function EnhancedDoctorDashboard() {
         body: JSON.stringify({
           patientId: selectedPatient,
           dateTime,
-          questions,
+          questions: JSON.stringify(questions),
+          nurse: selectedNurse,
         }),
       })
 
       if (response.ok) {
         setDateTime('')
         setQuestions([])
+        setSelectedNurse('')
         alert('Call scheduled successfully!')
         fetchScheduledCalls(selectedPatient)
       } else {
@@ -136,6 +144,8 @@ export default function EnhancedDoctorDashboard() {
       alert('Failed to schedule call. Please try again.')
     }
   }
+
+  
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 font-sans">
@@ -248,25 +258,34 @@ export default function EnhancedDoctorDashboard() {
                 <CardTitle>Scheduled Calls</CardTitle>
               </CardHeader>
               <CardContent>
-                {scheduledCalls.length > 0 ? (
-                  scheduledCalls.map(call => (
-                    <div key={call.id} className="mb-4 border-b pb-4">
-                        <p><strong>Date & Time:</strong> {format(new Date(call.dateTime), 'PPpp')}</p>
-                        <p><strong>Questions:</strong></p>                      <ul>
-                        {JSON.parse(call.questions).map((q: string, index: number) => (
-                          <li key={index}>{q}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))
-                ) : (
-                  <p>No scheduled calls for this patient.</p>
-                )}
-              </CardContent>
+        {scheduledCalls.map(call => (
+          <div key={call.id} className="mb-4 border-b pb-4">
+            <p><strong>Date & Time:</strong> {format(new Date(call.dateTime), 'PPpp')}</p>
+            <p><strong>Nurse:</strong> {call.nurse}</p>
+            <div className="flex items-center">
+              <strong className="mr-2">Status:</strong>
+              <StatusBadge status={call.status} />
+            </div>
+            <p><strong>Questions:</strong></p>
+            <ul>
+              {(() => {
+                try {
+                  const parsedQuestions = JSON.parse(call.questions);
+                  return Array.isArray(parsedQuestions) 
+                    ? parsedQuestions.map((q: string, index: number) => (
+                        <li key={index}>{q}</li>
+                      ))
+                    : <li>No questions available</li>;
+                } catch (error) {
+                  console.error('Error parsing questions:', error);
+                  return <li>Error loading questions</li>;
+                }
+              })()}
+            </ul>
+          </div>
+        ))}
+      </CardContent>
             </Card>
-
-
-
   
               {/* Schedule New Call Card */}
               <Card className="mb-6 bg-white shadow-lg">
@@ -280,24 +299,36 @@ export default function EnhancedDoctorDashboard() {
                     onChange={(e) => setDateTime(e.target.value)}
                     className="mb-4 p-2 border rounded"
                   />
-                  <div className="mb-4">
-                    <input
-                      type="text"
-                      value={newQuestion}
-                      onChange={(e) => setNewQuestion(e.target.value)}
-                      placeholder="New question"
-                      className="p-2 border rounded mr-2"
-                    />
-                    <Button onClick={handleAddQuestion}>Add Question</Button>
-                  </div>
-                  <ul className="mb-4">
-                    {questions.map((q, index) => (
-                      <li key={index}>{q}</li>
-                    ))}
-                  </ul>
-                  <Button onClick={handleScheduleCall} className="w-full">Schedule Call</Button>
-                </CardContent>
-              </Card>
+                  <Select onValueChange={setSelectedNurse} value={selectedNurse}>
+          <SelectTrigger className="mb-4">
+            <SelectValue placeholder="Select a nurse" />
+          </SelectTrigger>
+          <SelectContent>
+            {nurses.map((nurse) => (
+              <SelectItem key={nurse} value={nurse}>
+                {nurse}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <div className="mb-4">
+          <input
+            type="text"
+            value={newQuestion}
+            onChange={(e) => setNewQuestion(e.target.value)}
+            placeholder="New question"
+            className="p-2 border rounded mr-2"
+          />
+          <Button onClick={handleAddQuestion}>Add Question</Button>
+        </div>
+        <ul className="mb-4">
+          {questions.map((q, index) => (
+            <li key={index}>{q}</li>
+          ))}
+        </ul>
+        <Button onClick={handleScheduleCall} className="w-full">Schedule Call</Button>
+      </CardContent>
+    </Card>
             </div>
           )}
           {!selectedPatient && (

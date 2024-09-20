@@ -41,7 +41,9 @@ model CallSummary {
 model ScheduledCall {
   id        Int      @id @default(autoincrement())
   patientId Int
-  dateTime  DateTime 
+  dateTime  DateTime
   questions String
+  status    String   
+  nurse     String  
   patient   Patient  @relation(fields: [patientId], references: [id])
 }
