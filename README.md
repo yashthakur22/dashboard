@@ -16,8 +16,8 @@ To install the Doctor Dashboard, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/doctor-dashboard.git
-   cd doctor-dashboard
+   git clone https://github.com/yashthakur22/dashboard.git
+   cd dashboard/my-doctor-dashboard
    ```
 
 2. Install the dependencies:
