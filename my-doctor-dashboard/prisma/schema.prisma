@@ -39,11 +39,13 @@ model CallSummary {
 }
 
 model ScheduledCall {
-  id        Int      @id @default(autoincrement())
-  patientId Int
-  dateTime  DateTime
-  questions String
-  status    String   
-  nurse     String  
-  patient   Patient  @relation(fields: [patientId], references: [id])
+  id           Int       @id @default(autoincrement())
+  patientId    Int
+  dateTime     DateTime
+  questions    String
+  status       String
+  nurse        String
+  calledTime   DateTime?
+  completeTime DateTime?
+  patient      Patient   @relation(fields: [patientId], references: [id])
 }

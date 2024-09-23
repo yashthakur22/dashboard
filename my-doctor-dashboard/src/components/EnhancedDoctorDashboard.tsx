@@ -40,7 +40,10 @@ interface ScheduledCall {
   questions: string;
   status: 'PENDING' | 'CALLING' | 'COMPLETE' | 'NO_ANSWER' | 'INCOMPLETE';
   nurse: string;
+  calledTime?: string;
+  completeTime?: string;
 }
+
 export default function EnhancedDoctorDashboard() {
   const [patients, setPatients] = useState<Patient[]>([])
   const [selectedPatient, setSelectedPatient] = useState<number | null>(null)
@@ -145,7 +148,35 @@ export default function EnhancedDoctorDashboard() {
     }
   }
 
-  
+  const updateCallStatus = async (callId: number, status: string) => {
+    const now = new Date().toISOString();
+    const updateData: any = { id: callId, status };
+    
+    if (status === 'CALLING') {
+      updateData.calledTime = now;
+    } else if (status === 'COMPLETE' || status === 'NO_ANSWER' || status === 'INCOMPLETE') {
+      updateData.completeTime = now;
+    }
+
+    try {
+      const response = await fetch('/api/scheduled-calls', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (response.ok) {
+        fetchScheduledCalls(selectedPatient!);
+      } else {
+        throw new Error('Failed to update call status');
+      }
+    } catch (error) {
+      console.error('Error updating call status:', error);
+      alert('Failed to update call status. Please try again.');
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 font-sans">
@@ -255,9 +286,9 @@ export default function EnhancedDoctorDashboard() {
               {/* Scheduled Calls Card */}
             <Card className="mb-6 bg-white shadow-lg">
               <CardHeader>
-                <CardTitle>Scheduled Calls</CardTitle>
-              </CardHeader>
-              <CardContent>
+              <CardTitle>Scheduled Calls</CardTitle>
+      </CardHeader>
+      <CardContent>
         {scheduledCalls.map(call => (
           <div key={call.id} className="mb-4 border-b pb-4">
             <p><strong>Date & Time:</strong> {format(new Date(call.dateTime), 'PPpp')}</p>
@@ -266,26 +297,30 @@ export default function EnhancedDoctorDashboard() {
               <strong className="mr-2">Status:</strong>
               <StatusBadge status={call.status} />
             </div>
+            {call.calledTime && (
+              <p><strong>Called Time:</strong> {format(new Date(call.calledTime), 'PPpp')}</p>
+            )}
+            {call.completeTime && (
+              <p><strong>Complete Time:</strong> {format(new Date(call.completeTime), 'PPpp')}</p>
+            )}
             <p><strong>Questions:</strong></p>
             <ul>
-              {(() => {
-                try {
-                  const parsedQuestions = JSON.parse(call.questions);
-                  return Array.isArray(parsedQuestions) 
-                    ? parsedQuestions.map((q: string, index: number) => (
-                        <li key={index}>{q}</li>
-                      ))
-                    : <li>No questions available</li>;
-                } catch (error) {
-                  console.error('Error parsing questions:', error);
-                  return <li>Error loading questions</li>;
-                }
-              })()}
+              {/* ... (questions rendering) */}
             </ul>
+            {call.status === 'PENDING' && (
+              <Button onClick={() => updateCallStatus(call.id, 'CALLING')}>Start Call</Button>
+            )}
+            {call.status === 'CALLING' && (
+              <>
+                <Button onClick={() => updateCallStatus(call.id, 'COMPLETE')}>Complete Call</Button>
+                <Button onClick={() => updateCallStatus(call.id, 'NO_ANSWER')}>No Answer</Button>
+                <Button onClick={() => updateCallStatus(call.id, 'INCOMPLETE')}>Incomplete</Button>
+              </>
+            )}
           </div>
         ))}
       </CardContent>
-            </Card>
+    </Card>
   
               {/* Schedule New Call Card */}
               <Card className="mb-6 bg-white shadow-lg">
